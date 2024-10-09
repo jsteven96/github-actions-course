@@ -14,4 +14,4 @@ jobs:
         run: ./gradlew build
       - name: Compile and run Java Code
         run: |
-          java -jar build/libs/*.jar
+          java -jar build/libs/*.jar ${{ github.actor }}
