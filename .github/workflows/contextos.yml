@@ -1,0 +1,10 @@
+name: Contextos
+run-name: Estoy aprendiendo contextos
+on: push
+jobs:
+  check-not-main:
+    if: ${{  github.ref != 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say message
+        run: echo "No estás en la rama main"
