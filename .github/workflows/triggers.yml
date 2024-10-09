@@ -1,0 +1,74 @@
+name: Triggers
+run-name: Aprendiendo a usar diferentes Triggers
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    paths:
+      - 'src/**.java'
+  issues:
+    types:
+      - labeled
+  workflow_dispatch:
+    inputs:
+      lenguaje_favorito:
+        description: 'Lenguaje favorito'
+        default: 'Java'
+        required: true
+        type: choice
+        options:
+          - 'Java'
+          - 'Python'
+          - 'JavaScript'
+          - 'C#'
+      nombre:
+        description: 'Nombre'
+        required: true
+        default: 'Javier'
+        type: string
+  schedule:
+    - cron: '15 22 * * *'
+jobs:
+  hola-mundo-manual:
+    name: Hola Mundo Manual
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Definir nombre
+        run: echo "Hola, ${{ github.event.inputs.nombre }}"
+      - name: Definir lenguaje favorito
+        run: echo "Tu lenguaje favorito es ${{ github.event.inputs.lenguaje_favorito }}"
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build
+      - name: Compile and run Java Code
+        run: |
+          java -jar build/libs/*.jar ${{ github.event.inputs.nombre }}
+  hola-mundo:
+    if: ${{ github.event_name != 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build
+      - name: Compile and run Java Code
+        run: |
+          java -jar build/libs/*.jar ${{ github.actor }}
